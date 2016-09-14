@@ -38,20 +38,24 @@ public class StartXmlParser {
         /*END OF PART 1*/
 
         XmlFileProcessorService x = new XmlFileProcessorService();
-        File[] xxx = x.checkForXMLFiles("/home/artemvlasenko");
-        Entry entry = x.mapXmlToEntity(xxx[0]);
-
+        File[] xxx = x.checkForXMLFiles("/home/artemvlasenko/xmltest");
 
         SessionFactory sessionFactory = HibernateService.getSessionFactory();
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        long id = (Long) session.save(entry);
-        session.getTransaction().commit();
-        // Entry entry1= (Entry) session.get(Entry.class, id);
-        System.out.println(entry);
-        session.close();
+        long processTime = System.currentTimeMillis();
+        for (File zz : xxx) {
+            Session session = sessionFactory.openSession();
+            Entry entry = x.mapXmlToEntity(zz);
+            session.beginTransaction();
+            long id = (Long) session.save(entry);
+            session.getTransaction().commit();
+            // Entry entry1= (Entry) session.get(Entry.class, id);
+            System.out.println(entry);
+            session.close();
+        }
         HibernateService.closeSessionFactory();
-
+        long duration = System.currentTimeMillis() - processTime;
+        System.out.println(duration);
+        //http://stackoverflow.com/questions/1442720/how-to-use-multiple-threads-to-process-large-number-of-files-stored-in-the-local
     }
 }
 
