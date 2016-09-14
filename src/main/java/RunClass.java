@@ -17,9 +17,10 @@ public class RunClass {
         session.beginTransaction();
         long id = (Long) session.save(entry);
         session.getTransaction().commit();
-        Entry entry1= (Entry) session.get(Entry.class, id);
+        // Entry entry1= (Entry) session.get(Entry.class, id);
         System.out.println(entry);
         session.close();
+        HibernateUtil.closeSessionFactory();
 
     }
 }
