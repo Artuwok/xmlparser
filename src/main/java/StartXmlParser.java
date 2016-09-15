@@ -1,6 +1,3 @@
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -14,7 +11,6 @@ public class StartXmlParser {
         /*PART 1 LOAD PROPERTIES*/
         Properties prop = new Properties();
         InputStream input = null;
-
         try {
             input = new FileInputStream("config.properties");
             // load a properties file
@@ -23,6 +19,10 @@ public class StartXmlParser {
             System.out.println(prop.getProperty("database"));
             System.out.println(prop.getProperty("dbuser"));
             System.out.println(prop.getProperty("dbpassword"));
+            System.out.println(prop.getProperty("inputdirectory"));
+            System.out.println(prop.getProperty("outputdirectory"));
+            System.out.println(prop.getProperty("unprocesseddirectory"));
+            System.out.println(prop.getProperty("monitoringinterval"));
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -37,26 +37,21 @@ public class StartXmlParser {
         }
         /*END OF PART 1*/
 
-        XmlFileProcessorService x = new XmlFileProcessorService();
-        File[] xxx = x.checkForXMLFiles("/home/artemvlasenko/xmltest");
+        /// https://examples.javacodegeeks.com/core-java/util/concurrent/scheduledexecutorservice/java-scheduledexecutorservice-example/
+        /*PART 2 EXECUTOR SERVICE*/
 
-        SessionFactory sessionFactory = HibernateService.getSessionFactory();
-        long processTime = System.currentTimeMillis();
-        Session session = sessionFactory.openSession();
-        for (File zz : xxx) {
+        long startTime = System.currentTimeMillis();
+        XmlFileProcessorService xmlFileProcessorService = new XmlFileProcessorService();
+        File[] allFiles = xmlFileProcessorService.checkForXMLFiles("/home/artemvlasenko/xmltest");
+        long duration = System.currentTimeMillis() - startTime;
+        System.out.println("Read time: " + duration + " ms to read: " + allFiles.length + " files");
+        startTime = System.currentTimeMillis();
+        MutlithreadService x = new MutlithreadService();
+        x.myltyJob(allFiles);
 
-            Entry entry = x.mapXmlToEntity(zz);
-            session.beginTransaction();
-            long id = (Long) session.save(entry);
-            session.getTransaction().commit();
-            // Entry entry1= (Entry) session.get(Entry.class, id);
-            System.out.println(entry);
+        duration = System.currentTimeMillis() - startTime;
+        System.out.println("Program takes: " + duration + " ms to process: " + allFiles.length + " files");
 
-        }
-        session.close();
-        HibernateService.closeSessionFactory();
-        long duration = System.currentTimeMillis() - processTime;
-        System.out.println("Program takes: " + duration + " ms to process: " + xxx.length + " files");
         //http://stackoverflow.com/questions/1442720/how-to-use-multiple-threads-to-process-large-number-of-files-stored-in-the-local
     }
 }

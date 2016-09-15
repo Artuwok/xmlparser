@@ -4,8 +4,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 public class HibernateService {
-    private static final SessionFactory sessionFactory;
 
+    private static final SessionFactory sessionFactory;
     private static final Logger logger = LogManager.getLogger(HibernateService.class);
 
     static {
