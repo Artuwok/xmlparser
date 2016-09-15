@@ -47,7 +47,7 @@ public class StartXmlParser {
         System.out.println("Read time: " + duration + " ms to read: " + allFiles.length + " files");
         startTime = System.currentTimeMillis();
         MutlithreadService x = new MutlithreadService();
-        x.myltyJob(allFiles);
+        x.myltyJob2(allFiles);
 
         duration = System.currentTimeMillis() - startTime;
         System.out.println("Program takes: " + duration + " ms to process: " + allFiles.length + " files");

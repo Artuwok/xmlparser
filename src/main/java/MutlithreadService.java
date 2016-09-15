@@ -8,13 +8,15 @@ import java.util.concurrent.*;
 
 public class MutlithreadService {
 
+    private final int THREAD_COUNT = 10;
+
     public void myltyJob(File[] fileArray) {
 
         SessionFactory sessionFactory = HibernateService.getSessionFactory();
         BlockingQueue<File> queueOfFiles = new ArrayBlockingQueue<>(fileArray.length, false, Arrays.asList(fileArray));
-        ExecutorService executorService = Executors.newFixedThreadPool(20); // TODO numver of threads
+        ExecutorService executorService = Executors.newFixedThreadPool(THREAD_COUNT); // TODO numver of threads
 
-        for (int count = 0; count < 20; ++count) {
+        for (int count = 0; count < THREAD_COUNT; ++count) {
             executorService.submit(new MyRunnable(queueOfFiles, sessionFactory));
         }
         executorService.shutdown();
@@ -24,6 +26,29 @@ public class MutlithreadService {
 
         } finally {
             HibernateService.closeSessionFactory();
+        }
+    }
+
+    public void myltyJob2(File[] fileArray) {
+
+        SessionFactory sessionFactory = HibernateService.getSessionFactory();
+        BlockingQueue<File> queueOfFiles = new ArrayBlockingQueue<>(fileArray.length, false, Arrays.asList(fileArray));
+
+        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(THREAD_COUNT);
+        executorService.scheduleAtFixedRate(() -> {
+            for (int count = 0; count < THREAD_COUNT; ++count) {
+                executorService.submit(new MyRunnable(queueOfFiles, sessionFactory));
+            }
+        }, 0, 200000L, TimeUnit.MILLISECONDS);
+
+
+        executorService.shutdown();
+        try {
+            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+
+        } finally {
+          //  HibernateService.closeSessionFactory();
         }
     }
 
