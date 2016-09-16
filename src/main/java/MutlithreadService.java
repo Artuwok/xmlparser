@@ -35,21 +35,30 @@ public class MutlithreadService {
         BlockingQueue<File> queueOfFiles = new ArrayBlockingQueue<>(fileArray.length, false, Arrays.asList(fileArray));
 
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(THREAD_COUNT);
-        executorService.scheduleAtFixedRate(() -> {
-            for (int count = 0; count < THREAD_COUNT; ++count) {
-                executorService.submit(new MyRunnable(queueOfFiles, sessionFactory));
-            }
-        }, 0, 200000L, TimeUnit.MILLISECONDS);
 
-
-        executorService.shutdown();
-        try {
-            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-        } catch (InterruptedException e) {
-
-        } finally {
-          //  HibernateService.closeSessionFactory();
+        for (int count = 0; count < THREAD_COUNT; ++count) {
+            executorService.submit(new MyRunnable(queueOfFiles, sessionFactory));
         }
+
+        ScheduledFuture<?> scheduledFuture = executorService.scheduleAtFixedRate((new MyRunnable(queueOfFiles, sessionFactory)), 0, 20L, TimeUnit.SECONDS);
+
+
+        boolean isJobDone = scheduledFuture.isDone();
+
+        while (!isJobDone) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            isJobDone = scheduledFuture.isDone();
+        }
+
+        if (isJobDone) {
+            HibernateService.closeSessionFactory();
+            System.exit(0);
+        }
+
     }
 
     private class MyRunnable implements Runnable {
@@ -74,7 +83,7 @@ public class MutlithreadService {
                     session.save(entry);
                     session.flush();
                     session.clear();
-                    System.out.println(entry);
+                    System.out.println(entry + " Thread name: " + Thread.currentThread().getName());
                 }
                 tx.commit();
             } catch (Exception e) {
