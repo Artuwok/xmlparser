@@ -5,7 +5,7 @@
 <hibernate-configuration>
     <session-factory>
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
-        <property name="hibernate.connection.password">7777777</property>
+        <property name="hibernate.connection.password">newPassword</property>
         <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/xmlparser</property>
         <property name="hibernate.connection.username">postgres</property>
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQL9Dialect</property>
@@ -17,6 +17,6 @@
         <property name="hibernate.c3p0.timeout">300</property>
         <property name="hibernate.c3p0.max_statements">50</property>
         <property name="hibernate.c3p0.idle_test_period">3000</property>
-        <mapping class="Entry"/>
+        <mapping class="repository.model.Entry"/>
     </session-factory>
 </hibernate-configuration>
