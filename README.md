@@ -6,6 +6,7 @@ The input format of xml file is:
 
 &lt;Entry&gt;
 &lt;content&gt;some content up to 1024 characters&lt;/content&gt;
+
 &lt;creationDate&gt;2014-01-01 00:00:00&lt;/creationDate&gt;
 &lt;/Entry&gt;
 
