@@ -11,7 +11,7 @@ public class PropertyLoaderService {
     public static final String INPUT_DIRECTORY = props.getProperty("inputdirectory");
     public static final String OUTPUT_DIRECTOTY = props.getProperty("outputdirectory");
     public static final String ERROR_DIRECTORY = props.getProperty("unprocesseddirectory");
-    private static final String MONITORING_INTERVAL = props.getProperty("monitoringinterval");
+    public static final String MONITORING_INTERVAL = props.getProperty("monitoringinterval");
 
 
     private static Properties loadProperties() {

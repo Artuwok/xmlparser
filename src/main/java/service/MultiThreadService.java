@@ -95,8 +95,6 @@ public class MultiThreadService {
                 for (int count = 0; count < threadCount; ++count) {
                     executorService.submit(new MyRunnable(queueOfFiles, sessionFactory));
                 }
-            } else {
-
             }
         }
     }
