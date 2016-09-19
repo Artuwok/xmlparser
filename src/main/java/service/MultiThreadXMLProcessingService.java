@@ -2,6 +2,7 @@ package service;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -23,6 +24,9 @@ public class MultiThreadXMLProcessingService {
         executorService.scheduleAtFixedRate((new ExecutorServiceStarter
                         (sessionFactory, THREADS_NUMBER, executorService)), 0,
                 PropertyLoaderService.MONITORING_INTERVAL, TimeUnit.MINUTES);
+
+        logger.info("MultiThreadXMLProcessingService will start with: " + THREADS_NUMBER + ": threads "
+                + " and delay of: " + PropertyLoaderService.MONITORING_INTERVAL + " minutes between tasks");
     }
 
     private class MyRunnable implements Runnable {
@@ -51,11 +55,13 @@ public class MultiThreadXMLProcessingService {
                     xmlProcessor.moveFile(file, false);
                 }
                 tx.commit();
-            } catch (Exception e) {
+            } catch (HibernateException e) {
                 tx.rollback();
+                logger.error("Data was not saved to database!", e);
+                System.out.println("Something went wrong with committing to database. See logs!");
             } finally {
                 session.close();
-                logger.info("Thread # " + Thread.currentThread().getName() + " is finished");
+                logger.info("Thread # " + Thread.currentThread().getName() + " is finished" + " Session was closed");
             }
         }
     }
@@ -77,12 +83,17 @@ public class MultiThreadXMLProcessingService {
             File[] files = new XmlFileProcessorService().checkForXMLFiles(PropertyLoaderService.INPUT_DIRECTORY);
             long duration = System.currentTimeMillis() - startTime;
             logger.info("Read time: " + duration + " ms to read: " + files.length + " files from file system");
-
+            System.out.println("Read time: " + duration + " ms to read: " + files.length + " files from file system");
             if (files.length != 0) {
                 BlockingQueue<File> queueOfFiles = new ArrayBlockingQueue<>(files.length, false, Arrays.asList(files));
                 for (int count = 0; count < threadCount; ++count) {
                     executorService.submit(new MyRunnable(queueOfFiles, sessionFactory));
                 }
+            } else {
+                logger.info("No files to process.The system will check in: "
+                        + PropertyLoaderService.MONITORING_INTERVAL + " minutes");
+                System.out.println("No files to process.The system will check in: "
+                        + PropertyLoaderService.MONITORING_INTERVAL + " minutes");
             }
         }
     }

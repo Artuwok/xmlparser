@@ -8,16 +8,16 @@ import org.hibernate.cfg.Configuration;
 
 public class HibernateService {
 
-    private static final SessionFactory sessionFactory;
     private static final Logger logger = LogManager.getLogger(HibernateService.class);
+    private static SessionFactory sessionFactory;
 
     static {
         try {
             sessionFactory = new Configuration().configure().buildSessionFactory();
-            logger.info("HIBERNATE SESSION WAS CREATED SUCCESSFULLY!");
+            logger.info("Hibernate session was created!");
         } catch (HibernateException ex) {
-            logger.info("FAIL TO CREATE SESSION FACTORY!");
-            throw new ExceptionInInitializerError(ex);
+            logger.error("Failed to create hibernate session. See the logs!", ex);
+            System.out.print("Failed to create hibernate session! Check the hibernate.cfg.xml");
         }
     }
 
@@ -28,6 +28,6 @@ public class HibernateService {
     public static void closeSessionFactory() {
         if (sessionFactory != null)
             sessionFactory.close();
-        logger.info("HIBERNATE SESSION WAS CLOSED");
+        logger.info("Hibernate session was closed successfully");
     }
 }
