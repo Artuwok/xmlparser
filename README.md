@@ -40,7 +40,7 @@ Pay attention that processing of files are multithreaded and is scheduled with t
   - gradle clean
   - gradle xmlParserJar
   - gradle copyTask
- 8. Starting the app.
+8. Starting the app.
   - navigate to build/libs/ directory
   - com.parser-all-1.0-all.jar is a jar with all dependencies
   - startXmlParserLinux.sh (sudo ./startXmlParserLinux.sh) - starts the app in terminal
@@ -49,5 +49,5 @@ Pay attention that processing of files are multithreaded and is scheduled with t
   - result files of running program is in output directories
   - to close the app simply close the terminal
   - logs are in the log directory.
- 9. Have fun! :)
+9. Have fun! :)
   
