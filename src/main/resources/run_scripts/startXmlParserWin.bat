@@ -1,0 +1,1 @@
+java -jar %~dp0com.parser-all-1.0-all.jar %*

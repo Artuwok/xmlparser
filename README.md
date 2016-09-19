@@ -19,4 +19,4 @@ Steps of processing files:
 3. Persistance of Java enteties in postgresql database. Scripts to create db and table are included
 4. Move processed files to output directory
 
-Pay attention that processing of files are multithreaded and is sceduled with time interval.
+Pay attention that processing of files are multithreaded and is scheduled with time interval.

@@ -37,3 +37,8 @@ task xmlParserJar(type: Jar) {
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
+
+task copyTask(type: Copy) {
+    from 'src/main/resources/run_scripts/'
+    into 'build/libs/'
+}

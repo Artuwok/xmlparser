@@ -1,44 +1,33 @@
 package service;
 
-import java.io.FileInputStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 public class PropertyLoaderService {
 
     private static final Properties props = PropertyLoaderService.loadProperties();
     public static final String INPUT_DIRECTORY = props.getProperty("inputdirectory");
-    public static final String OUTPUT_DIRECTOTY = props.getProperty("outputdirectory");
+    public static final String OUTPUT_DIRECTORY = props.getProperty("outputdirectory");
     public static final String ERROR_DIRECTORY = props.getProperty("unprocesseddirectory");
-    public static final String MONITORING_INTERVAL = props.getProperty("monitoringinterval");
+    public static final int MONITORING_INTERVAL = Integer.parseInt(props.getProperty("monitoringinterval"));
 
-
+    private static final Logger logger = LogManager.getLogger(PropertyLoaderService.class);
     private static Properties loadProperties() {
-
         Properties prop = new Properties();
-        InputStream input = null;
         try {
-            input = new FileInputStream("config.properties");
-            prop.load(input);
-            //  System.out.println(prop.getProperty("database"));
-            //   System.out.println(prop.getProperty("dbuser"));
-            //  System.out.println(prop.getProperty("dbpassword"));
-            System.out.println(prop.getProperty("inputdirectory"));
-            System.out.println(prop.getProperty("outputdirectory"));
-            System.out.println(prop.getProperty("unprocesseddirectory"));
-            System.out.println(prop.getProperty("monitoringinterval"));
+            prop.load(Thread.currentThread().getContextClassLoader()
+                    .getResourceAsStream("config.properties"));
+            logger.info(prop.getProperty("input_directory"));
+            logger.info(prop.getProperty("output_directory"));
+            logger.info(prop.getProperty("unprocessed_directory"));
+            logger.info(prop.getProperty("monitoring_interval"));
         } catch (IOException ex) {
             ex.printStackTrace();
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
+        logger.info("Properties are loaded");
         return prop;
     }
 

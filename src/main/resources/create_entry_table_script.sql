@@ -1,3 +1,5 @@
+CREATE DATABASE xmlparser OWNER postgres;
+
 CREATE TABLE entry
 (  id            BIGINT NOT NULL,
   content       CHARACTER VARYING(255),

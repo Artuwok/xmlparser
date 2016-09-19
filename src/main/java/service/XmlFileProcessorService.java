@@ -52,7 +52,7 @@ public class XmlFileProcessorService {
 
         Path movePath = isBrokenFile ?
                 new File(PropertyLoaderService.ERROR_DIRECTORY + file.getName()).toPath() :
-                new File(PropertyLoaderService.OUTPUT_DIRECTOTY + file.getName()).toPath();
+                new File(PropertyLoaderService.OUTPUT_DIRECTORY + file.getName()).toPath();
         try {
             Files.move(file.toPath(), movePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {

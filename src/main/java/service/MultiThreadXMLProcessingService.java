@@ -1,5 +1,7 @@
 package service;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -9,32 +11,18 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.concurrent.*;
 
-public class MultiThreadService {
+public class MultiThreadXMLProcessingService {
 
-    private final int THREADS_NUMBER = 1;
+    private static final Logger logger = LogManager.getLogger(MultiThreadXMLProcessingService.class);
+    private final int THREADS_NUMBER = 10;
 
-    public void multiJob2() {
+    public void process() {
 
         SessionFactory sessionFactory = HibernateService.getSessionFactory();
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(THREADS_NUMBER);
-        ScheduledFuture<?> scheduledFuture = executorService.scheduleAtFixedRate((new XRunnable(sessionFactory, THREADS_NUMBER, executorService)), 0, 20L, TimeUnit.SECONDS);
-
-      /*  boolean isJobDone = scheduledFuture.isDone();
-
-        while (!isJobDone) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            isJobDone = scheduledFuture.isDone();
-        }
-
-        if (isJobDone) {
-            HibernateService.closeSessionFactory();
-            System.exit(0);
-        }*/
-
+        executorService.scheduleAtFixedRate((new ExecutorServiceStarter
+                        (sessionFactory, THREADS_NUMBER, executorService)), 0,
+                PropertyLoaderService.MONITORING_INTERVAL, TimeUnit.MINUTES);
     }
 
     private class MyRunnable implements Runnable {
@@ -59,7 +47,7 @@ public class MultiThreadService {
                     session.save(entry);
                     session.flush();
                     session.clear();
-                    System.out.println(entry + " Thread name: " + Thread.currentThread().getName());
+                    logger.info(entry + " Thread name: " + Thread.currentThread().getName());
                     xmlProcessor.moveFile(file, false);
                 }
                 tx.commit();
@@ -67,17 +55,17 @@ public class MultiThreadService {
                 tx.rollback();
             } finally {
                 session.close();
-                System.out.println("THREAD # " + Thread.currentThread().getName() + " IS FINISHED");
+                logger.info("Thread # " + Thread.currentThread().getName() + " is finished");
             }
         }
     }
 
-    private class XRunnable implements Runnable {
+    private class ExecutorServiceStarter implements Runnable {
         final ExecutorService executorService;
         final SessionFactory sessionFactory;
         long threadCount;
 
-        XRunnable(SessionFactory sessionFactory, long threadCount, ExecutorService executorService) {
+        ExecutorServiceStarter(SessionFactory sessionFactory, long threadCount, ExecutorService executorService) {
             this.executorService = executorService;
             this.threadCount = threadCount;
             this.sessionFactory = sessionFactory;
@@ -88,7 +76,7 @@ public class MultiThreadService {
             long startTime = System.currentTimeMillis();
             File[] files = new XmlFileProcessorService().checkForXMLFiles(PropertyLoaderService.INPUT_DIRECTORY);
             long duration = System.currentTimeMillis() - startTime;
-            System.out.println("Read time: " + duration + " ms to read: " + files.length + " files");
+            logger.info("Read time: " + duration + " ms to read: " + files.length + " files from file system");
 
             if (files.length != 0) {
                 BlockingQueue<File> queueOfFiles = new ArrayBlockingQueue<>(files.length, false, Arrays.asList(files));

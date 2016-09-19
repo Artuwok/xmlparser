@@ -15,7 +15,7 @@ public class PropertyLoaderServiceTest {
     public void assertPropertiesAreNotEmpty() {
         assertNotNull(PropertyLoaderService.ERROR_DIRECTORY);
         assertNotNull(PropertyLoaderService.INPUT_DIRECTORY);
-        assertNotNull(PropertyLoaderService.OUTPUT_DIRECTOTY);
+        assertNotNull(PropertyLoaderService.OUTPUT_DIRECTORY);
         assertNotNull(PropertyLoaderService.MONITORING_INTERVAL);
     }
 
