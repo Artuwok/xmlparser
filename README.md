@@ -36,7 +36,7 @@ Pay attention that processing of files are multithreaded and is scheduled with t
 6. Set up config.properties   
  - check the directories set-up
  - set up the monitoring interval parameter (only integer values in minutes)
- 7. Make type in console:
+7. Make type in console:
   - gradle clean
   - gradle xmlParserJar
   - gradle copyTask
@@ -49,5 +49,5 @@ Pay attention that processing of files are multithreaded and is scheduled with t
   - result files of running program is in output directories
   - to close the app simply close the terminal
   - logs are in the log directory.
-  9. Have fun! :)
+ 9. Have fun! :)
   
