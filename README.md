@@ -4,10 +4,10 @@
 
 The input format of xml file is:
 
-<Entry>
+"<Entry>
 <content>some content up to 1024 characters</content>
 <creationDate>2014-01-01 00:00:00</creationDate>
-</Entry>
+</Entry>"
 
 Steps of processing files:
 
